@@ -5,20 +5,17 @@ let lyrics = [];
 let currentLine = 0;
 let isPlaying = false;
 
-const typingSpeed = 85;
-const lineDelay = 500;
+const LINE_DURATION = 4000; // 4 seconds for EVERY whole line
+const PAUSE_BETWEEN_LINES = 300; // 0.3 second pause
 
 
-/* LOAD LYRICS */
-
+// LOAD LYRICS
 async function loadLyrics() {
-
     try {
-
         const response = await fetch("lyrics.txt");
 
         if (!response.ok) {
-            throw new Error("lyrics.txt could not be loaded.");
+            throw new Error("Could not load lyrics.txt");
         }
 
         const text = await response.text();
@@ -26,79 +23,76 @@ async function loadLyrics() {
         lyrics = text
             .split(/\r?\n/)
             .map(line => line.trim())
-            .filter(line => line !== "");
+            .filter(line => line.length > 0);
 
-        console.log("Lyrics loaded:", lyrics.length);
+        console.log("Loaded lines:", lyrics.length);
 
     } catch (error) {
-
         console.error(error);
 
         lyricsElement.textContent =
-            "Lyrics could not be loaded.";
-
+            "Could not load lyrics.txt";
     }
 }
 
 
-/* PLAY */
-
+// PLAY BUTTON
 playBtn.addEventListener("click", () => {
 
-    // Prevent clicking multiple times
-    if (isPlaying) {
-        return;
-    }
+    if (isPlaying) return;
 
-    // Make sure lyrics have loaded
     if (lyrics.length === 0) {
         lyricsElement.textContent =
-            "Please wait for the lyrics to load.";
+            "Lyrics are still loading...";
         return;
     }
 
     isPlaying = true;
 
-    // Hide play button
+    // Hide button after clicking
     playBtn.style.display = "none";
 
-    // Start from the beginning
     currentLine = 0;
 
     lyricsElement.textContent = "";
 
-    typeLine();
-
+    showNextLine();
 });
 
 
-/* TYPE LINE */
+// SHOW NEXT LINE
+function showNextLine() {
 
-function typeLine() {
-
-    if (!isPlaying) {
-        return;
-    }
+    if (!isPlaying) return;
 
     if (currentLine >= lyrics.length) {
-
-        finish();
-
+        finishTyping();
         return;
     }
 
     const line = lyrics[currentLine];
 
+    typeLine(line);
+}
+
+
+// TYPE ONE COMPLETE LINE IN EXACTLY 4 SECONDS
+function typeLine(line) {
+
     lyricsElement.textContent = "";
 
     let character = 0;
 
+    // Calculate how many milliseconds
+    // each character gets.
+
+    const characterDelay =
+        LINE_DURATION / line.length;
+
 
     function typeCharacter() {
 
-        if (!isPlaying) {
-            return;
-        }
+        if (!isPlaying) return;
 
         if (character < line.length) {
 
@@ -109,39 +103,37 @@ function typeLine() {
 
             setTimeout(
                 typeCharacter,
-                typingSpeed
+                characterDelay
             );
 
         } else {
+
+            // Line is completely typed.
+            // Wait a tiny bit, then move on.
 
             setTimeout(() => {
 
                 currentLine++;
 
-                typeLine();
+                showNextLine();
 
-            }, lineDelay);
-
+            }, PAUSE_BETWEEN_LINES);
         }
-
     }
 
-    typeCharacter();
 
+    typeCharacter();
 }
 
 
-/* FINISH */
-
-function finish() {
+// WHEN EVERYTHING IS FINISHED
+function finishTyping() {
 
     isPlaying = false;
 
     lyricsElement.textContent = "♡";
-
 }
-    
 
-/* LOAD THE LYRICS */
 
+// LOAD THE LYRICS
 loadLyrics();
