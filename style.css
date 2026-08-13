@@ -1,0 +1,332 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    color: white;
+}
+
+/* BACKGROUND */
+
+.background {
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(5, 8, 20, 0.35),
+            rgba(5, 8, 20, 0.78)
+        ),
+        url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2000&q=90")
+        center / cover no-repeat;
+
+    transform: scale(1.05);
+
+    animation: slowZoom 18s ease-in-out infinite alternate;
+
+    z-index: -3;
+}
+
+@keyframes slowZoom {
+    from {
+        transform: scale(1.05);
+    }
+
+    to {
+        transform: scale(1.12);
+    }
+}
+
+/* DARK OVERLAY */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.04),
+            rgba(0, 0, 0, 0.65)
+        );
+
+    z-index: -2;
+}
+
+/* STARS */
+
+.stars {
+    position: fixed;
+    inset: 0;
+
+    background-image:
+        radial-gradient(circle, white 1px, transparent 1px),
+        radial-gradient(circle, white 1px, transparent 1px);
+
+    background-size:
+        110px 110px,
+        170px 170px;
+
+    background-position:
+        20px 30px,
+        80px 90px;
+
+    opacity: 0.25;
+
+    animation: starsMove 25s linear infinite;
+
+    z-index: -1;
+}
+
+@keyframes starsMove {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-80px);
+    }
+}
+
+/* MAIN */
+
+.container {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
+
+/* CARD */
+
+.music-card {
+    width: min(700px, 92vw);
+    min-height: 500px;
+
+    padding: 45px 40px;
+
+    border-radius: 28px;
+
+    background: rgba(15, 15, 25, 0.48);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+
+    text-align: center;
+
+    animation: appear 1.5s ease;
+}
+
+@keyframes appear {
+
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ALBUM */
+
+.album {
+    width: 85px;
+    height: 85px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.2),
+            rgba(255,255,255,0.04)
+        );
+
+    border: 1px solid rgba(255,255,255,0.2);
+
+    font-size: 40px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.3);
+
+    animation: heartbeat 2s infinite;
+}
+
+@keyframes heartbeat {
+
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+/* TITLE */
+
+.song-info h1 {
+    font-size: 30px;
+    font-weight: normal;
+
+    letter-spacing: 2px;
+}
+
+.song-info p {
+    margin-top: 7px;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 13px;
+
+    opacity: 0.6;
+}
+
+/* DIVIDER */
+
+.music-line {
+    width: 100%;
+    height: 1px;
+
+    margin: 30px 0;
+
+    background: rgba(255,255,255,0.15);
+}
+
+/* LYRICS */
+
+.lyrics-container {
+    min-height: 220px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
+
+#lyrics {
+    font-size: 23px;
+
+    line-height: 1.8;
+
+    letter-spacing: 0.3px;
+
+    text-shadow:
+        0 2px 15px rgba(0,0,0,0.6);
+
+    transition: opacity 0.3s ease;
+}
+
+/* CURSOR */
+
+#cursor {
+    display: inline-block;
+
+    margin-left: 3px;
+
+    font-size: 24px;
+
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+
+    0%, 50% {
+        opacity: 1;
+    }
+
+    51%, 100% {
+        opacity: 0;
+    }
+}
+
+/* BUTTON */
+
+#replayBtn {
+    margin-top: 15px;
+
+    padding: 10px 24px;
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    border-radius: 30px;
+
+    background: rgba(255,255,255,0.08);
+
+    color: white;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+#replayBtn:hover {
+    background: rgba(255,255,255,0.18);
+
+    transform: translateY(-2px);
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .music-card {
+        min-height: 470px;
+
+        padding: 30px 20px;
+
+        border-radius: 22px;
+    }
+
+    .album {
+        width: 70px;
+        height: 70px;
+
+        font-size: 32px;
+    }
+
+    .song-info h1 {
+        font-size: 25px;
+    }
+
+    #lyrics {
+        font-size: 18px;
+
+        line-height: 1.7;
+    }
+
+    .lyrics-container {
+        min-height: 230px;
+    }
+}
