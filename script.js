@@ -5,8 +5,8 @@ let lyrics = [];
 let currentLine = 0;
 let isPlaying = false;
 
-const LINE_DURATION = 5000; // EXACTLY 5 seconds per line
-const PAUSE_BETWEEN_LINES = 200; // small pause before next line
+const LINE_DURATION = 6000; // 6 seconds from first to last letter
+const PAUSE_BETWEEN_LINES = 200;
 
 
 // ==============================
@@ -28,7 +28,7 @@ async function loadLyrics() {
             .map(line => line.trim())
             .filter(line => line.length > 0);
 
-        console.log("Lyrics loaded:", lyrics.length);
+        console.log("Loaded:", lyrics.length, "lines");
 
     } catch (error) {
         console.error(error);
@@ -45,9 +45,7 @@ async function loadLyrics() {
 
 playBtn.addEventListener("click", () => {
 
-    if (isPlaying) {
-        return;
-    }
+    if (isPlaying) return;
 
     if (lyrics.length === 0) {
         lyricsElement.textContent =
@@ -57,74 +55,71 @@ playBtn.addEventListener("click", () => {
 
     isPlaying = true;
 
-    // Hide the button
     playBtn.style.display = "none";
 
-    // Start from first line
     currentLine = 0;
 
-    lyricsElement.textContent = "";
+    lyricsElement.innerHTML = "";
 
-    showNextLine();
+    typeNextLine();
 });
 
 
 // ==============================
-// SHOW NEXT LINE
+// TYPE NEXT LINE
 // ==============================
 
-function showNextLine() {
+function typeNextLine() {
 
-    if (!isPlaying) {
-        return;
-    }
+    if (!isPlaying) return;
 
     if (currentLine >= lyrics.length) {
-        finishTyping();
+        finish();
         return;
     }
 
-    typeLine(lyrics[currentLine]);
-}
+    const text = lyrics[currentLine];
 
+    // Create a NEW line.
+    // Previous lines stay on screen.
+    const lineElement = document.createElement("div");
 
-// ==============================
-// TYPE ONE LINE
-// ==============================
+    lineElement.className = "lyric-line";
 
-function typeLine(line) {
-
-    lyricsElement.textContent = "";
+    lyricsElement.appendChild(lineElement);
 
     let character = 0;
 
     /*
-        The entire line takes exactly
-        5 seconds to type.
+        IMPORTANT:
+
+        The complete line takes 6 seconds.
 
         Example:
+        30 characters
 
-        20 characters
-        5000 ÷ 20
-        = 250ms per character
+        6000 / 30
+        = 200 milliseconds per character
     */
 
     const characterDelay =
-        LINE_DURATION / line.length;
+        LINE_DURATION / text.length;
 
 
     function typeCharacter() {
 
-        if (!isPlaying) {
-            return;
-        }
+        if (!isPlaying) return;
 
-        if (character < line.length) {
+        if (character < text.length) {
 
-            lyricsElement.textContent +=
-                line.charAt(character);
+            lineElement.textContent +=
+                text.charAt(character);
 
             character++;
+
+            // Keep the newest line visible
+            lyricsElement.scrollTop =
+                lyricsElement.scrollHeight;
 
             setTimeout(
                 typeCharacter,
@@ -133,19 +128,17 @@ function typeLine(line) {
 
         } else {
 
-            // The complete line has now
-            // taken approximately 5 seconds.
+            // The LAST character has appeared.
+            // Wait briefly, then start next line.
 
-            setTimeout(() => {
+            currentLine++;
 
-                currentLine++;
-
-                showNextLine();
-
-            }, PAUSE_BETWEEN_LINES);
+            setTimeout(
+                typeNextLine,
+                PAUSE_BETWEEN_LINES
+            );
         }
     }
-
 
     typeCharacter();
 }
@@ -155,11 +148,11 @@ function typeLine(line) {
 // FINISHED
 // ==============================
 
-function finishTyping() {
+function finish() {
 
     isPlaying = false;
 
-    lyricsElement.textContent = "♡";
+    console.log("Lyrics finished.");
 }
 
 
